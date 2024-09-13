@@ -1,15 +1,6 @@
 "use client";
-import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,12 +11,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import AvatarPro from "../Avatar/AvatarPro";
 
 const MainHeader = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isSignUpDialogOpen, setIsSignUpDialogOpen] = useState(false);
+  const { data: session } = useSession();
+
   return (
     <div className="shadow-md w-full md:w-[700px] mx-auto">
       <div className="flex items-center gap-3 py-2 px-3">
@@ -38,77 +29,31 @@ const MainHeader = () => {
           className="rounded-full outline-primary"
         />
 
-        {/* <Button
-          onClick={() => setIsSignUpDialogOpen(!isSignUpDialogOpen)}
-          className="rounded-full"
-        >
-          Sign up
-        </Button> */}
-
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full outline-none">
-            <AvatarPro />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/profile">Profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Log out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Link href="/add-imei" className={buttonVariants()}>
-          Add IMEI
-        </Link>
+        {session?.user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="rounded-full outline-none">
+              <AvatarPro />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild className="sm:hidden">
+                <Link href="/add-imei">Add IMEI</Link>
+              </DropdownMenuItem>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile">Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()}>
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link href="/sign-up" className={buttonVariants()}>
+            Sign up
+          </Link>
+        )}
       </div>
-      {/* Log in Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Log in</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-2">
-            <Input type="text" placeholder="Enter your email or phone number" />
-            <Input type="password" placeholder="Enter your password" />
-          </div>
-          <p className="text-sm text-muted-foreground w-fit hover:cursor-pointer hover:underline">
-            Forget password?
-          </p>
-          <DialogFooter>
-            <Button type="submit">Log In</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {/* Sign up Dialog */}
-      <Dialog open={isSignUpDialogOpen} onOpenChange={setIsSignUpDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Sign up</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-2">
-            <Input type="text" placeholder="Enter your name" />
-            <Input type="text" placeholder="Enter your email or phone number" />
-            <Input type="password" placeholder="Enter your password" />
-          </div>
-          <p className="text-sm text-muted-foreground w-fit hover:cursor-pointer hover:underline">
-            If you already have an account.{" "}
-            <a
-              href="#"
-              onClick={() => {
-                setIsSignUpDialogOpen(false);
-                setIsDialogOpen(!isDialogOpen);
-              }}
-              className="text-primary font-bold"
-            >
-              log in
-            </a>
-          </p>
-          <DialogFooter>
-            <Button type="submit">Sign Up</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

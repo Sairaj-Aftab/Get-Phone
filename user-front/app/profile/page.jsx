@@ -1,25 +1,21 @@
+"use client";
 import AvatarPro from "@/components/Avatar/AvatarPro";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-const Profile = () => {
+const Profile = async () => {
+  const { data: session } = useSession();
   return (
     <div className="py-5">
       <div className="flex gap-2 items-center">
-        {/* <Image
-          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Profile Avatar"
-          width={0}
-          height={0}
-          sizes="100vw"
-          className="h-32 w-32 rounded-full object-cover"
-        /> */}
         <AvatarPro width={"w-32"} height={"h-32"} />
 
         <div>
-          <h1 className="text-2xl font-bold">Jhon Doe</h1>
-          <p className="text-gray-500">5wK7U@example.com</p>
+          <h1 className="text-2xl font-bold">{session?.user?.name}</h1>
+          <p className="text-gray-500">
+            {session?.user?.phone ? session?.user?.phone : session?.user?.email}
+          </p>
         </div>
       </div>
       {/* List of IMEI numbers */}

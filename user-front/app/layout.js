@@ -2,9 +2,12 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import MainHeader from "@/components/Header/MainHeader";
+import { Toaster } from "@/components/ui/toaster";
+import AuthProvider from "@/components/AuthProvider";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
   subsets: ["latin"],
   display: "swap",
 });
@@ -17,22 +20,25 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${roboto.className} antialiased h-screen flex flex-col`}
-      >
-        <MainHeader />
-        <main className="w-full md:w-[700px] mx-auto h-full px-3 md:border-x border-gray-300">
-          {children}
-        </main>
-        <footer className="w-full md:w-[700px] mx-auto bg-gray-200 py-1 text-center">
-          <p className="text-gray-700 text-sm font-medium">
-            Powered by{" "}
-            <Link href="/" className="text-blue-600">
-              -----------
-            </Link>
-          </p>
-        </footer>
-      </body>
+      <AuthProvider>
+        <body
+          className={`${roboto.variable} antialiased h-screen flex flex-col`}
+        >
+          <MainHeader />
+          <main className="w-full md:w-[700px] mx-auto h-full px-3 md:border-x border-gray-300">
+            {children}
+          </main>
+          <footer className="w-full md:w-[700px] mx-auto bg-gray-200 py-1 text-center">
+            <p className="text-gray-700 text-sm font-medium">
+              Powered by{" "}
+              <Link href="/" className="text-blue-600">
+                -----------
+              </Link>
+            </p>
+          </footer>
+          <Toaster />
+        </body>
+      </AuthProvider>
     </html>
   );
 }
